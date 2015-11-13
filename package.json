@@ -1,5 +1,5 @@
 {
-  "name": "entity-crud",
+  "name": "inmemory-entity-crud",
   "title": "In memory entity storage",
   "description": "In memory entity storage providing basic CRUD operations",
   "version": "0.0.1",
@@ -9,9 +9,11 @@
   "repository": {
     "type": "git", "url": "https://github.com/vencax/js-inmemory-entity-crud.git"
   },
+  "homepage": "https://github.com/vencax/js-inmemory-entity-crud",
   "keywords": [
     "mock", "crud"
   ],
+  "license" : "MIT",
   "dependencies": {
     "coffee-script": "^1.6.3"
   },
@@ -29,5 +31,6 @@
   },
   "scripts": {
     "test": "mocha --compilers coffee:coffee-script/register test/"
-  }
+  },
+  "engines" : { "node" : ">=0.10" }
 }
