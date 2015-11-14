@@ -111,3 +111,29 @@ module.exports = (g) ->
 
     should.exists newItem.id
     done()
+
+  it "shall emit events", (done) ->
+    c = new g.Index('url')
+    data =
+      name: "iPhone 4 32GB černý"
+      url: "iphone-4-32gb-cerny"
+    called = null
+
+    c.on 'add', (newItem)->
+      called = newItem
+    c.add data
+    called.should.eql data
+
+    c.on 'update', (changedItem)->
+      called = changedItem
+    updated =
+      url: data.url
+      name: 'updated'
+    c.update data.url, {name: updated.name}
+    called.should.eql updated
+
+    c.on 'remove', (removedItem)->
+      called = removedItem
+    c.remove data.url
+    called.should.eql updated
+    done()

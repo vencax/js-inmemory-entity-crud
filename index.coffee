@@ -1,8 +1,9 @@
+EventEmitter = require('events')
 
-
-class EntityStorageMock
+class EntityStorageMock extends EventEmitter
 
   constructor: (idFieldName) ->
+    super("EntityStorageMock")
     @fId = idFieldName
     @nextId = 0
     @items = {}
@@ -17,9 +18,13 @@ class EntityStorageMock
     for k, v of item
       v = @randomAttr(k, item[@fId]) if v == 'rand'
     @items[item[@fId]] = item
+    @emit('add', item)
+    return item
 
   remove: (id) ->
+    item = @items[id]
     delete @items[id]
+    @emit('remove', item)
 
   list: () ->
     return (v for k, v of @items)
@@ -28,15 +33,16 @@ class EntityStorageMock
     return @items[id]
 
   update: (id, vals) ->
+    item = @items[id]
     for k, v of vals
-      @items[id][k] = v
-    return @items[id]
+      item[k] = v
+    @emit('update', item)
+    return item
 
   exists: (id) ->
     return id of @items
 
   initExpressApp: (app, url)->
-
     self = this
 
     app.get url, (req, res) ->
