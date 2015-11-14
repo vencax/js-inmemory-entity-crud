@@ -5,6 +5,7 @@ express = require 'express'
 bodyParser = require 'body-parser'
 
 Crud = require('./crud')
+Retrieval = require('./retrieval')
 
 port = process.env.PORT || 3333
 process.env.NODE_ENV = 'devel'
@@ -43,3 +44,4 @@ describe "app", ->
   g.url = "http://localhost:#{port}#{g.baseurl}"
 
   Crud(g)
+  Retrieval(g)

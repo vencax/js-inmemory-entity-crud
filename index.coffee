@@ -27,10 +27,22 @@ class EntityStorageMock extends EventEmitter
     delete @items[id]
     @emit('remove', item)
 
-  list: (attrs) ->
-    rv = _.map @items, (i)->
-      return _.pick(i, attrs) if attrs
-      return i
+  list: (attrs, filter) ->
+    _match = (item)->
+      for k, v of filter
+        if item[k] != v
+          return false
+      return true
+
+    rv = []
+    for id, i of @items
+      if filter
+        continue if not _match(i)
+      if attrs
+        rv.push(_.pick(i, attrs))
+      else
+        rv.push(i)
+    return rv
 
   get: (id, attrs) ->
     return _.pick(@items[id], attrs) if attrs
@@ -50,11 +62,12 @@ class EntityStorageMock extends EventEmitter
     self = this
 
     app.get url, (req, res) ->
-      try
-        attrs = req.query.attrs.split(',')
-      catch
-        attrs = undefined
-      res.json(self.list(attrs))
+      if req.query.attrs != undefined
+        try
+          attrs = req.query.attrs.split(',')
+        delete req.query.attrs
+      filter = req.query # the rest of query is filter
+      res.json(self.list(attrs, filter))
 
     app.post url, (req, res) ->
       newItem = self.add(req.body)
