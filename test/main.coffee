@@ -22,9 +22,9 @@ describe "app", ->
   app = express()
   app.use(bodyParser.json())
 
-  Index = require "../index"
+  g.Index = require "../index"
 
-  g.cls = new Index('url')
+  g.cls = new g.Index('url')
   g.baseurl = '/items'
   g.cls.initExpressApp(app, g.baseurl)
 

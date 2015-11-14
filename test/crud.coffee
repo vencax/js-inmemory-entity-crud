@@ -101,3 +101,13 @@ module.exports = (g) ->
       console.log body
       res.statusCode.should.eql 200
       done()
+
+  it "shall automaticly generate id", (done) ->
+    c = new g.Index('id')
+    data =
+      name: "iPhone 4 32GB černý"
+      url: "iphone-4-32gb-cerny"
+    newItem = c.add data
+
+    should.exists newItem.id
+    done()
