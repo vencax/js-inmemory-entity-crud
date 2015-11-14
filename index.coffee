@@ -1,3 +1,4 @@
+_ = require('lodash')
 EventEmitter = require('events')
 
 class EntityStorageMock extends EventEmitter
@@ -16,7 +17,7 @@ class EntityStorageMock extends EventEmitter
       item[@fId] = @nextId
       @nextId++
     for k, v of item
-      v = @randomAttr(k, item[@fId]) if v == 'rand'
+      item[k] = @randomAttr(k, item[@fId]) if v == 'rand'
     @items[item[@fId]] = item
     @emit('add', item)
     return item
@@ -26,10 +27,13 @@ class EntityStorageMock extends EventEmitter
     delete @items[id]
     @emit('remove', item)
 
-  list: () ->
-    return (v for k, v of @items)
+  list: (attrs) ->
+    rv = _.map @items, (i)->
+      return _.pick(i, attrs) if attrs
+      return i
 
-  get: (id) ->
+  get: (id, attrs) ->
+    return _.pick(@items[id], attrs) if attrs
     return @items[id]
 
   update: (id, vals) ->
@@ -46,7 +50,11 @@ class EntityStorageMock extends EventEmitter
     self = this
 
     app.get url, (req, res) ->
-      res.json(self.list())
+      try
+        attrs = req.query.attrs.split(',')
+      catch
+        attrs = undefined
+      res.json(self.list(attrs))
 
     app.post url, (req, res) ->
       newItem = self.add(req.body)
@@ -54,7 +62,11 @@ class EntityStorageMock extends EventEmitter
 
     app.get "#{url}/:id", (req, res) ->
       return res.status(404).end() if not self.exists(req.params.id)
-      res.json(self.get(req.params.id))
+      try
+        attrs = req.query.attrs.split(',')
+      catch
+        attrs = undefined
+      res.json(self.get(req.params.id, attrs))
 
     app.put "#{url}/:id", (req, res) ->
       return res.status(404).end() if not self.exists(req.params.id)

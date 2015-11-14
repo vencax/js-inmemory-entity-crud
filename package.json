@@ -7,15 +7,18 @@
     "name": "Vaclav Klecanda <vencax77@gmail.com>"
   },
   "repository": {
-    "type": "git", "url": "https://github.com/vencax/js-inmemory-entity-crud.git"
+    "type": "git",
+    "url": "https://github.com/vencax/js-inmemory-entity-crud.git"
   },
   "homepage": "https://github.com/vencax/js-inmemory-entity-crud",
   "keywords": [
-    "mock", "crud"
+    "mock",
+    "crud"
   ],
-  "license" : "MIT",
+  "license": "MIT",
   "dependencies": {
-    "coffee-script": "^1.6.3"
+    "coffee-script": "^1.6.3",
+    "lodash": "^3.10.1"
   },
   "devDependencies": {
     "body-parser": "^1.14.1",
@@ -32,5 +35,7 @@
   "scripts": {
     "test": "mocha --compilers coffee:coffee-script/register test/"
   },
-  "engines" : { "node" : ">=0.10" }
+  "engines": {
+    "node": ">=0.10"
+  }
 }
