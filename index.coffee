@@ -4,12 +4,16 @@ class EntityStorageMock
 
   constructor: (idFieldName) ->
     @fId = idFieldName
+    @nextId = 0
     @items = {}
 
   randomAttr: (attName, id, len=8) ->
     return "#{attName} value for #{id}; #{Math.random().toString(len)}"
 
   add: (item) ->
+    if item[@fId] == undefined
+      item[@fId] = @nextId
+      @nextId++
     for k, v of item
       v = @randomAttr(k, item[@fId]) if v == 'rand'
     @items[item[@fId]] = item
