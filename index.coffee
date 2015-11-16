@@ -62,12 +62,36 @@ class EntityStorageMock extends EventEmitter
     self = this
 
     app.get url, (req, res) ->
-      if req.query.attrs != undefined
-        try
+      try
+        if req.query.attrs != undefined
           attrs = req.query.attrs.split(',')
-        delete req.query.attrs
-      filter = req.query # the rest of query is filter
-      res.json(self.list(attrs, filter))
+        if req.query.filter != undefined
+          filter = {}
+          for i in req.query.filter.split('@')
+            parts = i.split(':')
+            filter[parts[0]] = parts[1]
+        if req.query.limit != undefined
+          limit = parseInt(req.query.limit)
+        if req.query.offset != undefined
+          offset = parseInt(req.query.offset)
+        if req.query.order != undefined
+          order = req.query.order
+      catch e
+        return res.status(400).send("wrong params: #{e}")
+
+      results = self.list(attrs, filter)
+      if limit or offset
+        begin = offset || 0
+        if limit
+          end = offset + limit
+          results = _.slice(results, begin, end)
+        else
+          results = _.slice(results, begin)
+      if order
+        results.sort (a, b)->
+          a[order] > b[order]
+
+      res.json(results)
 
     app.post url, (req, res) ->
       newItem = self.add(req.body)
