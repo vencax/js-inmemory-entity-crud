@@ -3,22 +3,31 @@ EventEmitter = require('events')
 
 class EntityStorageMock extends EventEmitter
 
-  constructor: (idFieldName) ->
+  constructor: (idFieldName, autoIdGenerator) ->
     super("EntityStorageMock")
     @fId = idFieldName
     @nextId = 0
     @items = {}
+    @autoIdGenerator = autoIdGenerator || (item)->
+      item[@fId] = @nextId
+      @nextId++
 
   randomAttr: (attName, id, len=8) ->
     return "#{attName} value for #{id}; #{Math.random().toString(len)}"
 
   add: (item) ->
     if item[@fId] == undefined
-      item[@fId] = @nextId
-      @nextId++
+      @autoIdGenerator(item)
+
     for k, v of item
       item[k] = @randomAttr(k, item[@fId]) if v == 'rand'
-    @items[item[@fId]] = item
+
+    if item.parent and @items[item.parent]
+      parent = @items[item.parent]
+      parent.children = [] if not parent.children
+      parent.children.push item
+    else
+      @items[item[@fId]] = item
     @emit('add', item)
     return item
 
