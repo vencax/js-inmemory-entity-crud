@@ -1,4 +1,6 @@
-# In memory entity storage
+# THIS IS DEPRECATED!!!
+
+## In memory entity storage
 
 providing basic CRUD operations.
 
